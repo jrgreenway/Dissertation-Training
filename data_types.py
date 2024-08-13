@@ -1,5 +1,6 @@
 from enum import Enum
 import json
+import pandas as pd
 
 
 class Ship:
@@ -19,6 +20,9 @@ class Event:
         self.ship2: Ship
         self.label: Situation
 
+    def to_df(self):
+        return
+
     def to_dict(self):
         return dict(
             primary=self.ship1.to_dict(),
@@ -29,16 +33,30 @@ class Event:
 
 class EventGroup:
     def __init__(self):
-        self.id_count = 0
-        self.group = dict()
+        self.group = None
+
+    def merge_dicts(self, dict1, dict2):
+        merged_dict = {}
+        for key in dict1:
+            merged_dict[f"{key}_1"] = dict1[key]
+        for key in dict2:
+            merged_dict[f"{key}_2"] = dict2[key]
+        return merged_dict
 
     def add_event(self, event: Event):
-        self.group[self.id_count] = event.to_dict()
-        self.id_count += 1
+        primary_dict = event.ship1.to_dict()
+        secondary_dict = event.ship2.to_dict()
+        row = self.merge_dicts(primary_dict, secondary_dict)
+        row["Label"] = event.label.value
+        if self.group is None:
+            self.group = pd.DataFrame([row])
+        else:
+            self.group = pd.concat([self.group, pd.DataFrame([row])], ignore_index=True)
 
     def to_json(self, file_path, name):
+        json_str = self.group.to_json(orient="records")
         with open(file_path + name + ".json", "w") as file:
-            json.dump(self.group, file)
+            file.write(json_str)
 
 
 class Situation(Enum):

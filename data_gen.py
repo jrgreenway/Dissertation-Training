@@ -110,11 +110,11 @@ else:
     save_path = "results/events/"
 
 for i in [save_path]:
-    os.makedirs(i)
+    os.makedirs(i, exist_ok=True)
 
 for sit, sample in zip(
     list(Situation),
-    [OVERTAKING_SAMPLE, HEAD_ON_SAMPLE, CROSSING_SAMPLE / 2, CROSSING_SAMPLE / 2],
+    [OVERTAKING_SAMPLE, HEAD_ON_SAMPLE, CROSSING_SAMPLE, CROSSING_SAMPLE],
 ):
     eventgroup = gen_eventgroup(sample, sit, CONSTRAINTS)
     eventgroup.to_json(save_path, sit.name)
