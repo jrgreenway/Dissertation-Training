@@ -20,7 +20,9 @@ class Dataset(torch.utils.data.Dataset):
     def __len__(self):
         return len(self.data)
 
-    def __getitem__(self, index):
+    def __getitem__(
+        self, index
+    ):  # TODO redo this class to reflect use of DataFrames instead of dictionaries
         item = self.data[index]
         text = (
             f"Primary X: {item['primary']['X']}, Primary Y: {item['primary']['Y']}, "
