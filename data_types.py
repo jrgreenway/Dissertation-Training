@@ -62,5 +62,9 @@ class EventGroup:
 class Situation(Enum):
     OVERTAKE = 0
     HEAD_ON = 1
-    CROSSING_1 = 2
-    CROSSING_2 = 3
+    CROSSING = 2
+
+
+class Crossing(Enum):
+    CROSSING_1 = 0
+    CROSSING_2 = 1

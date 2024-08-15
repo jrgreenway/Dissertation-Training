@@ -1,0 +1,80 @@
+2024-08-15 11:23:12,120 - INFO - Fold 0 / 5
+2024-08-15 11:23:24,396 - INFO - Loss: 1.2348326444625854
+2024-08-15 11:25:32,871 - INFO - Fold 0 / 5
+2024-08-15 11:25:43,768 - INFO - Loss: 1.2218760251998901
+2024-08-15 11:27:50,147 - INFO - Fold 0 / 5
+2024-08-15 11:28:09,715 - INFO - Loss: 1.2170902490615845
+2024-08-15 11:29:06,756 - INFO - Fold 0 / 5
+2024-08-15 11:29:19,261 - INFO - Loss: 1.1733685731887817
+2024-08-15 11:32:09,335 - INFO - Fold 0 / 5
+2024-08-15 11:32:43,256 - INFO - Loss: 1.093389630317688
+2024-08-15 11:34:54,622 - INFO - Fold 0 / 5
+2024-08-15 11:35:12,119 - INFO - Loss: 1.15312922000885
+2024-08-15 11:35:13,112 - INFO - Validation Accuracy for fold 1: 0.3333
+2024-08-15 11:35:13,112 - INFO - Validation Precision for fold 1: 0.1111
+2024-08-15 11:35:13,112 - INFO - Validation Recall for fold 1: 0.3333
+2024-08-15 11:35:13,112 - INFO - Validation F1 Score for fold 1: 0.1667
+2024-08-15 11:39:54,731 - INFO - Fold 0 / 5
+2024-08-15 11:40:09,312 - INFO - Loss: 1.1839152574539185
+2024-08-15 11:40:58,573 - INFO - Fold 0 / 5
+2024-08-15 11:41:10,669 - INFO - Loss: 1.1424274444580078
+2024-08-15 11:43:14,576 - INFO - Fold 0 / 5
+2024-08-15 11:43:27,276 - INFO - Loss: 1.1219600439071655
+2024-08-15 11:43:28,032 - INFO - Validation Accuracy for fold 1: 0.3333
+2024-08-15 11:43:28,032 - INFO - Validation Precision for fold 1: 0.1111
+2024-08-15 11:43:28,033 - INFO - Validation Recall for fold 1: 0.3333
+2024-08-15 11:43:28,033 - INFO - Validation F1 Score for fold 1: 0.1667
+2024-08-15 11:43:28,602 - INFO - Fold 1 / 5
+2024-08-15 11:43:35,844 - INFO - Loss: 1.1200774908065796
+2024-08-15 11:43:36,500 - INFO - Validation Accuracy for fold 2: 0.3333
+2024-08-15 11:43:36,500 - INFO - Validation Precision for fold 2: 0.1111
+2024-08-15 11:43:36,501 - INFO - Validation Recall for fold 2: 0.3333
+2024-08-15 11:43:36,501 - INFO - Validation F1 Score for fold 2: 0.1667
+2024-08-15 11:43:36,968 - INFO - Fold 2 / 5
+2024-08-15 11:43:44,751 - INFO - Loss: 1.1663869619369507
+2024-08-15 11:43:45,406 - INFO - Validation Accuracy for fold 3: 0.3333
+2024-08-15 11:43:45,407 - INFO - Validation Precision for fold 3: 0.1111
+2024-08-15 11:43:45,407 - INFO - Validation Recall for fold 3: 0.3333
+2024-08-15 11:43:45,407 - INFO - Validation F1 Score for fold 3: 0.1667
+2024-08-15 11:43:45,950 - INFO - Fold 3 / 5
+2024-08-15 11:43:53,841 - INFO - Loss: 1.1736570596694946
+2024-08-15 11:43:54,576 - INFO - Validation Accuracy for fold 4: 0.3333
+2024-08-15 11:43:54,577 - INFO - Validation Precision for fold 4: 0.1111
+2024-08-15 11:43:54,577 - INFO - Validation Recall for fold 4: 0.3333
+2024-08-15 11:43:54,577 - INFO - Validation F1 Score for fold 4: 0.1667
+2024-08-15 11:43:54,997 - INFO - Fold 4 / 5
+2024-08-15 11:44:02,077 - INFO - Loss: 1.127860426902771
+2024-08-15 11:44:02,801 - INFO - Validation Accuracy for fold 5: 0.5000
+2024-08-15 11:44:02,802 - INFO - Validation Precision for fold 5: 0.3333
+2024-08-15 11:44:02,802 - INFO - Validation Recall for fold 5: 0.5000
+2024-08-15 11:44:02,802 - INFO - Validation F1 Score for fold 5: 0.3889
+2024-08-15 11:46:30,255 - INFO - Fold 0 / 5
+2024-08-15 11:46:42,870 - INFO - Loss: 1.1683415174484253
+2024-08-15 11:46:43,561 - INFO - Validation Accuracy for fold 1: 0.3333
+2024-08-15 11:46:43,561 - INFO - Validation Precision for fold 1: 0.1111
+2024-08-15 11:46:43,561 - INFO - Validation Recall for fold 1: 0.3333
+2024-08-15 11:46:43,561 - INFO - Validation F1 Score for fold 1: 0.1667
+2024-08-15 11:46:44,209 - INFO - Fold 1 / 5
+2024-08-15 11:46:51,804 - INFO - Loss: 1.1746939420700073
+2024-08-15 11:46:52,497 - INFO - Validation Accuracy for fold 2: 0.3333
+2024-08-15 11:46:52,497 - INFO - Validation Precision for fold 2: 0.1111
+2024-08-15 11:46:52,497 - INFO - Validation Recall for fold 2: 0.3333
+2024-08-15 11:46:52,497 - INFO - Validation F1 Score for fold 2: 0.1667
+2024-08-15 11:46:53,029 - INFO - Fold 2 / 5
+2024-08-15 11:47:00,305 - INFO - Loss: 1.1694459915161133
+2024-08-15 11:47:00,994 - INFO - Validation Accuracy for fold 3: 0.3333
+2024-08-15 11:47:00,994 - INFO - Validation Precision for fold 3: 0.1111
+2024-08-15 11:47:00,994 - INFO - Validation Recall for fold 3: 0.3333
+2024-08-15 11:47:00,994 - INFO - Validation F1 Score for fold 3: 0.1667
+2024-08-15 11:47:01,454 - INFO - Fold 3 / 5
+2024-08-15 11:47:08,350 - INFO - Loss: 1.1121537685394287
+2024-08-15 11:47:08,952 - INFO - Validation Accuracy for fold 4: 0.3333
+2024-08-15 11:47:08,952 - INFO - Validation Precision for fold 4: 0.1111
+2024-08-15 11:47:08,952 - INFO - Validation Recall for fold 4: 0.3333
+2024-08-15 11:47:08,952 - INFO - Validation F1 Score for fold 4: 0.1667
+2024-08-15 11:47:09,398 - INFO - Fold 4 / 5
+2024-08-15 11:47:17,211 - INFO - Loss: 1.1723660230636597
+2024-08-15 11:47:17,952 - INFO - Validation Accuracy for fold 5: 0.3333
+2024-08-15 11:47:17,952 - INFO - Validation Precision for fold 5: 0.1111
+2024-08-15 11:47:17,953 - INFO - Validation Recall for fold 5: 0.3333
+2024-08-15 11:47:17,953 - INFO - Validation F1 Score for fold 5: 0.1667

@@ -6,9 +6,6 @@ from tqdm import tqdm
 from GLOBAL_VAR import *
 from data_types import *
 
-total_size = CROSSING_SAMPLE + OVERTAKING_SAMPLE + HEAD_ON_SAMPLE
-total_count = 0
-
 
 def gen_primary_ship(constraints):
     c = constraints
@@ -46,7 +43,9 @@ def crossing_helper(primary_ship, c, ship):
     return lower_angle, upper_angle
 
 
-def gen_random_ship(constraints, primary_ship, situation: Situation) -> Ship:
+def gen_random_ship(
+    constraints, primary_ship, situation: Situation, *, crossing: Crossing = None
+) -> Ship:
     c = constraints
     ship = Ship()
     distance = random.uniform(50, c["x_max"] / 2)
@@ -62,24 +61,25 @@ def gen_random_ship(constraints, primary_ship, situation: Situation) -> Ship:
         ship.X, ship.Y = gen_x_y(primary_ship.X, primary_ship.Y, bearing, distance)
         ship.Heading = 180
         ship.Speed = random.uniform(c["speed_min"], c["speed_max"])
-    elif situation == Situation.CROSSING_1:
-        bearing = random.uniform(*CROSSING_BEARING_1)
-        ship.X, ship.Y = gen_x_y(primary_ship.X, primary_ship.Y, bearing, distance)
-        lower, upper = crossing_helper(primary_ship, c, ship)
-        ship.Heading = random.uniform(lower, upper)
+    elif situation == Situation.CROSSING:
+        if crossing == Crossing.CROSSING_1:
+            bearing = random.uniform(*CROSSING_BEARING_1)
+            ship.X, ship.Y = gen_x_y(primary_ship.X, primary_ship.Y, bearing, distance)
+            lower, upper = crossing_helper(primary_ship, c, ship)
+            ship.Heading = random.uniform(lower, upper)
 
-        if bearing < 90:
-            speed1 = c["speed_min"]
-            speed2 = c["speed_max"]
-        else:
-            speed1 = primary_ship.Speed
-            speed2 = c["speed_max"] + 5
-        ship.Speed = random.uniform(speed1, speed2)
-    elif situation == Situation.CROSSING_2:
-        bearing = random.uniform(*CROSSING_BEARING_2)
-        ship.X, ship.Y = gen_x_y(primary_ship.X, primary_ship.Y, bearing, distance)
-        lower, upper = crossing_helper(primary_ship, c, ship)
-        ship.Heading = random.uniform(lower, upper)
+            if bearing < 90:
+                speed1 = c["speed_min"]
+                speed2 = c["speed_max"]
+            else:
+                speed1 = primary_ship.Speed
+                speed2 = c["speed_max"] + 5
+            ship.Speed = random.uniform(speed1, speed2)
+        elif crossing == Crossing.CROSSING_2:
+            bearing = random.uniform(*CROSSING_BEARING_2)
+            ship.X, ship.Y = gen_x_y(primary_ship.X, primary_ship.Y, bearing, distance)
+            lower, upper = crossing_helper(primary_ship, c, ship)
+            ship.Heading = random.uniform(lower, upper)
 
         if bearing > 270:
             speed1 = primary_ship.Speed
@@ -104,6 +104,39 @@ def gen_eventgroup(size, situation: Situation, constraints):
     return group
 
 
+def gen_crossing_group(size, situation: Situation, constraints):
+    group = EventGroup()
+    for i in tqdm(range(size // 2)):
+        event = Event()
+        primary_ship = gen_primary_ship(constraints)
+        secondary_ship = gen_random_ship(
+            constraints, primary_ship, situation, crossing=Crossing.CROSSING_1
+        )
+        event.label = situation
+        event.ship1 = primary_ship
+        event.ship2 = secondary_ship
+        group.add_event(event)
+    for i in tqdm(range(size // 2)):
+        event = Event()
+        primary_ship = gen_primary_ship(constraints)
+        secondary_ship = gen_random_ship(
+            constraints, primary_ship, situation, crossing=Crossing.CROSSING_2
+        )
+        event.label = situation
+        event.ship1 = primary_ship
+        event.ship2 = secondary_ship
+        group.add_event(event)
+    return group
+
+
+def generate(size, situation: Situation, constraints):
+    if situation == Situation.CROSSING:
+        group = gen_crossing_group(size, situation, constraints)
+    else:
+        group = gen_eventgroup(size, situation, constraints)
+    return group
+
+
 if TESTING:
     save_path = "testing/events/"
 else:
@@ -114,7 +147,7 @@ for i in [save_path]:
 
 for sit, sample in zip(
     list(Situation),
-    [OVERTAKING_SAMPLE, HEAD_ON_SAMPLE, CROSSING_SAMPLE, CROSSING_SAMPLE],
+    [OVERTAKING_SAMPLE, HEAD_ON_SAMPLE, CROSSING_SAMPLE],
 ):
-    eventgroup = gen_eventgroup(sample, sit, CONSTRAINTS)
+    eventgroup = generate(sample, sit, CONSTRAINTS)
     eventgroup.to_json(save_path, sit.name)
