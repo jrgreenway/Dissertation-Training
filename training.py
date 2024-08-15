@@ -111,3 +111,4 @@ for fold, (t_data, v_data) in enumerate(k_data):
     tokeniser.save_pretrained(f"{model_save_folder}fold_{fold}")
 
 metrics.end(metric_save_folder)
+logging.info("End of Script")
