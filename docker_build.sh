@@ -1,0 +1,1 @@
+hare build -t jrg80/dissertation .
