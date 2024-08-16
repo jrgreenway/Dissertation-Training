@@ -1,0 +1,1 @@
+hare run --rm -v "$(pwd)":/app jrg80/dissertation /app/docker_run.sh 
