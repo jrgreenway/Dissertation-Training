@@ -137,10 +137,10 @@ class Dataset(Dataset):
     def __getitem__(self, idx):
         row = self.data.iloc[idx]
         text = (
-            f"The primary ship has a position ({row['X_1']}, {row['Y_1']}), "
-            f"a heading of {row['Heading_1']} degrees, and a speed of {row['Speed_1']} knots. "
-            f"The secondary ship has a position ({row['X_2']}, {row['Y_2']}), "
-            f"a heading of {row['Heading_2']} degrees, and a speed of {row['Speed_2']} knots."
+            f"The primary ship has a position ({int(row['X_1'])}, {int(row['Y_1'])}), "
+            f"a heading of {int(row['Heading_1'])} degrees, and a speed of {int(row['Speed_1'])} knots. "
+            f"The secondary ship has a position ({int(row['X_2'])}, {int(row['Y_2'])}), "
+            f"a heading of {int(row['Heading_2'])} degrees, and a speed of {int(row['Speed_2'])} knots."
         )
 
         inputs = self.tokeniser.encode_plus(
