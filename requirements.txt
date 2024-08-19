@@ -30,7 +30,7 @@ sympy==1.12.1
 tbb==2021.13.0
 threadpoolctl==3.5.0
 tokenizers==0.19.1
-torch==2.0.1+cu117
+torch==2.0.1
 tqdm==4.66.4
 transformers==4.41.2
 typing_extensions==4.12.2
