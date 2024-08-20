@@ -10,7 +10,7 @@ from sklearn.metrics import precision_score, recall_score, f1_score, confusion_m
 from training_util import DataSorter, Metrics, Dataset
 import os
 
-log_file_path = "logs/bert-training.log"
+log_file_path = "/app/logs/bert-training.log"
 
 if os.path.exists(log_file_path):
     os.remove(log_file_path)
@@ -24,9 +24,9 @@ logging.basicConfig(
 )
 
 
-training_data_folder = "testing/events/" if TESTING else "results/events/"
-metric_save_folder = "testing/metrics/" if TESTING else "results/bert/metrics/"
-model_save_folder = "testing/models/" if TESTING else "results/bert/models/"
+training_data_folder = "testing/events/" if TESTING else "/app/results/events/"
+metric_save_folder = "testing/metrics/" if TESTING else "/app/results/bert/metrics/"
+model_save_folder = "testing/models/" if TESTING else "/app/results/bert/models/"
 
 for folder in [metric_save_folder, model_save_folder]:
     os.makedirs(folder, exist_ok=True)
@@ -75,14 +75,14 @@ for fold, (t_data, v_data) in enumerate(k_data):
         optimiser.step()
         optimiser.zero_grad()
 
-        logging.info(f"Loss: {loss.item()}")
+        # logging.info(f"Loss: {loss.item()}")
 
     model.eval()
     all_labels = []
     all_predictions = []
     with torch.no_grad():
         dataset = Dataset(v_data, tokeniser, max_length)
-        dataloader = torch.utils.data.DataLoader(dataset, batch_size=32, shuffle=False)
+        dataloader = torch.utils.data.DataLoader(dataset, batch_size=64, shuffle=False)
         for batch in dataloader:
             labels = batch["labels"]
             outputs = model(**batch)

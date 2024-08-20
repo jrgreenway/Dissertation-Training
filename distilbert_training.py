@@ -12,7 +12,7 @@ import os
 
 
 model_id = "distilbert"
-log_file_path = f"logs/{model_id}-training.log"
+log_file_path = f"/app/logs/{model_id}-training.log"
 
 if os.path.exists(log_file_path):
     os.remove(log_file_path)
@@ -26,9 +26,11 @@ logging.basicConfig(
 )
 
 
-training_data_folder = "testing/events/" if TESTING else "results/events/"
-metric_save_folder = "testing/metrics/" if TESTING else f"results/{model_id}/metrics/"
-model_save_folder = "testing/models/" if TESTING else f"results/{model_id}/models/"
+training_data_folder = "testing/events/" if TESTING else "/app/results/events/"
+metric_save_folder = (
+    "testing/metrics/" if TESTING else f"/app/results/{model_id}/metrics/"
+)
+model_save_folder = "testing/models/" if TESTING else f"/app/results/{model_id}/models/"
 
 for folder in [metric_save_folder, model_save_folder]:
     os.makedirs(folder, exist_ok=True)
@@ -66,7 +68,7 @@ for fold, (t_data, v_data) in enumerate(k_data):
     model.train()
 
     dataset = Dataset(t_data, tokeniser, max_length)
-    dataloader = torch.utils.data.DataLoader(dataset, batch_size=32, shuffle=True)
+    dataloader = torch.utils.data.DataLoader(dataset, batch_size=64, shuffle=True)
 
     for batch in dataloader:
         batch = {k: v.to(device) for k, v in batch.items()}
@@ -77,7 +79,7 @@ for fold, (t_data, v_data) in enumerate(k_data):
         optimiser.step()
         optimiser.zero_grad()
 
-        logging.info(f"Loss: {loss.item()}")
+        # logging.info(f"Loss: {loss.item()}")
 
     model.eval()
     all_labels = []
