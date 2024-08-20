@@ -64,7 +64,7 @@ for fold, (t_data, v_data) in enumerate(k_data):
     model.train()
 
     dataset = Dataset(t_data, tokeniser, max_length)
-    dataloader = torch.utils.data.DataLoader(dataset, batch_size=32, shuffle=True)
+    dataloader = torch.utils.data.DataLoader(dataset, batch_size=64, shuffle=True)
 
     for batch in dataloader:
         batch = {k: v.to(device) for k, v in batch.items()}
@@ -84,6 +84,7 @@ for fold, (t_data, v_data) in enumerate(k_data):
         dataset = Dataset(v_data, tokeniser, max_length)
         dataloader = torch.utils.data.DataLoader(dataset, batch_size=64, shuffle=False)
         for batch in dataloader:
+            batch = {k: v.to(device) for k, v in batch.items()}
             labels = batch["labels"]
             outputs = model(**batch)
             logits = outputs.logits

@@ -86,8 +86,9 @@ for fold, (t_data, v_data) in enumerate(k_data):
     all_predictions = []
     with torch.no_grad():
         dataset = Dataset(v_data, tokeniser, max_length)
-        dataloader = torch.utils.data.DataLoader(dataset, batch_size=32, shuffle=False)
+        dataloader = torch.utils.data.DataLoader(dataset, batch_size=64, shuffle=False)
         for batch in dataloader:
+            batch = {k: v.to(device) for k, v in batch.items()}
             labels = batch["labels"]
             outputs = model(**batch)
             logits = outputs.logits
