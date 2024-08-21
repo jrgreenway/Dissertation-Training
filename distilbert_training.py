@@ -32,7 +32,7 @@ logging.basicConfig(
 
 training_data_folder = "testing/events/" if TESTING else "/app/results/events/"
 metric_save_folder = (
-    "testing/metrics/" if TESTING else f"/app/results/{model_id}/metrics/"
+    "testing/metrics/" if TESTING else f"/app/results/{model_id}/metrics/{timestamp}/"
 )
 model_save_folder = "testing/models/" if TESTING else f"/app/results/{model_id}/models/"
 
@@ -115,12 +115,12 @@ for fold, (t_data, v_data) in enumerate(k_data):
     logging.info(f"Validation Recall for fold {fold+1}: {recall:.4f}")
     logging.info(f"Validation F1 Score for fold {fold+1}: {f1:.4f}")
 
-    metrics.save(metric_save_folder + timestamp + "/")
+    metrics.save(metric_save_folder)
     model.save_pretrained(f"{model_save_folder}fold_{fold}_{timestamp}")
     tokeniser.save_pretrained(f"{model_save_folder}fold_{fold}_{timestamp}")
 
 try:
-    metrics.end(metric_save_folder + timestamp + "/")
+    metrics.end(metric_save_folder)
     logging.info("End of Script")
 except Exception as e:
     logging.error(e)
