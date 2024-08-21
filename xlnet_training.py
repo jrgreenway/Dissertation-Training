@@ -118,6 +118,8 @@ for fold, (t_data, v_data) in enumerate(k_data):
     model.save_pretrained(f"{model_save_folder}fold_{fold}_{timestamp}")
     tokeniser.save_pretrained(f"{model_save_folder}fold_{fold}_{timestamp}")
 
-
-metrics.end(metric_save_folder + timestamp + "/")
-logging.info("End of Script")
+try:
+    metrics.end(metric_save_folder + timestamp + "/")
+    logging.info("End of Script")
+except Exception as e:
+    logging.error(e)
