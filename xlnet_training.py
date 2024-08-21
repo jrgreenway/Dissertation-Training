@@ -61,7 +61,7 @@ max_length = 128
 metrics = Metrics()
 
 for fold, (t_data, v_data) in enumerate(k_data):
-    logging.info(f"Fold {fold} / {len(k_data)}")
+    logging.info(f"Fold {fold+1} / {len(k_data)}")
     model, optimiser = make_model(model_name)
     model.to(device)
 

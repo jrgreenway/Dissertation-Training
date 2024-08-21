@@ -1,1 +1,0 @@
-hare run --rm --gpus device=2 -v "$(pwd)":/app jrg80/dissertation

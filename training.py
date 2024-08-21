@@ -57,7 +57,7 @@ max_length = 128
 metrics = Metrics()
 
 for fold, (t_data, v_data) in enumerate(k_data):
-    logging.info(f"Fold {fold} / {len(k_data)}")
+    logging.info(f"Fold {fold+1} / {len(k_data)}")
     model, optimiser = make_model(model_name)
     model.to(device)
 
@@ -110,6 +110,7 @@ for fold, (t_data, v_data) in enumerate(k_data):
     metrics.save(metric_save_folder)
     model.save_pretrained(f"{model_save_folder}fold_{fold}")
     tokeniser.save_pretrained(f"{model_save_folder}fold_{fold}")
+
 
 metrics.end(metric_save_folder)
 logging.info("End of Script")
