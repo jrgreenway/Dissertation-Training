@@ -2,6 +2,7 @@ from transformers import AutoModelForSequenceClassification, AutoTokenizer
 import torch.nn as nn
 import torch
 import torch.optim as optim
+from datetime import datetime
 
 from GLOBAL_VAR import TESTING
 import logging
@@ -13,6 +14,9 @@ import os
 
 model_id = "distilbert"
 log_file_path = f"/app/logs/{model_id}-training.log"
+
+now = datetime.now()
+timestamp = now.strftime("%Y%m%d_%H%M%S")
 
 if os.path.exists(log_file_path):
     os.remove(log_file_path)
@@ -111,9 +115,9 @@ for fold, (t_data, v_data) in enumerate(k_data):
     logging.info(f"Validation Recall for fold {fold+1}: {recall:.4f}")
     logging.info(f"Validation F1 Score for fold {fold+1}: {f1:.4f}")
 
-    metrics.save(metric_save_folder)
-    model.save_pretrained(f"{model_save_folder}fold_{fold}")
-    tokeniser.save_pretrained(f"{model_save_folder}fold_{fold}")
+    metrics.save(metric_save_folder + timestamp + "/")
+    model.save_pretrained(f"{model_save_folder}fold_{fold}_{timestamp}")
+    tokeniser.save_pretrained(f"{model_save_folder}fold_{fold}_{timestamp}")
 
-metrics.end(metric_save_folder)
+metrics.end(metric_save_folder + timestamp + "/")
 logging.info("End of Script")
