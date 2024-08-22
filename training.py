@@ -27,7 +27,7 @@ args = parser.parse_args()
 model_id = args.model
 fraction = args.fraction
 
-log_file_path = f"/app/logs/{model_id}-training.log"
+log_file_path = f"/app/logs/{model_id}-{fraction}-training.log"
 
 now = datetime.now()
 timestamp = now.strftime("%Y%m%d_%H%M%S")
