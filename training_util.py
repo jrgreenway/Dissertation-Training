@@ -1,17 +1,23 @@
 import os
 import json
-import random
 import pandas as pd
 from GLOBAL_VAR import TESTING
 import numpy as np
 from torch.utils.data import Dataset
 import torch
+import torch.nn as nn
+import torch.optim as optim
+import logging
+from sklearn.metrics import precision_score, recall_score, f1_score, confusion_matrix
+from transformers import AutoModelForSequenceClassification
 
 
 class DataSorter:
-    def __init__(self) -> None:
+    def __init__(self, fraction=1.0) -> None:
+        """Fraction is the fraction of all data to collate for getting smaller datasets"""
         self.data = dict()
         self.length = None
+        self.fraction = fraction
 
     def _info(self, df: pd.DataFrame):
         print(df.describe())
@@ -23,6 +29,8 @@ class DataSorter:
             with open(folder + file, "r") as f:
                 name = os.path.splitext(file)[0]
                 df = pd.read_json(f)
+                if self.fraction < 1.0:
+                    df = df.sample(frac=self.fraction)
                 self.data[name] = df
                 if TESTING:
                     self._info(df)
@@ -67,6 +75,7 @@ class DataSorter:
 
 class Metrics:
     def __init__(self):
+        self.metrics = {}
         self.accuracy = np.array([])
         self.precision = np.array([])
         self.recall = np.array([])
@@ -83,12 +92,16 @@ class Metrics:
             "confusion_matrix": self.confusion_matrix.tolist(),
         }
 
-    def add_metrics(self, a, p, r, f1, conf):
-        self.accuracy = np.append(self.accuracy, a)
-        self.precision = np.append(self.precision, p)
-        self.recall = np.append(self.recall, r)
-        self.f1 = np.append(self.f1, f1)
-        self.confusion_matrix = np.append(self.confusion_matrix, conf)
+    def add_metrics(self, fold, epoch, a, p, r, f1, conf):
+        if fold not in self.metrics:
+            self.metrics[fold] = {}
+        self.metrics[fold][epoch] = {
+            "accuracy": a,
+            "precision": p,
+            "recall": r,
+            "f1": f1,
+            "conf_matrix": conf.tolist(),  # Convert numpy array to list for JSON serialization
+        }
 
     def end(self, folder):
         self.result_bool = True
@@ -102,15 +115,34 @@ class Metrics:
             json.dump(self.to_dict(), f)
 
     def result(self):
-        avg_accuracy = np.mean(self.accuracy)
-        std_accuracy = np.std(self.accuracy)
-        avg_precision = np.mean(self.precision)
-        std_precision = np.std(self.precision)
-        avg_recall = np.mean(self.recall)
-        std_recall = np.std(self.recall)
-        avg_f1 = np.mean(self.f1)
-        std_f1 = np.std(self.f1)
-        avg_conf_matrix = np.mean(self.confusion_matrix, axis=0)
+        aggregated_metrics = {"accuracy": [], "precision": [], "recall": [], "f1": []}
+        for fold in self.metrics:
+            for epoch in self.metrics[fold]:
+                aggregated_metrics["accuracy"].append(
+                    self.metrics[fold][epoch]["accuracy"]
+                )
+                aggregated_metrics["precision"].append(
+                    self.metrics[fold][epoch]["precision"]
+                )
+                aggregated_metrics["recall"].append(self.metrics[fold][epoch]["recall"])
+                aggregated_metrics["f1"].append(self.metrics[fold][epoch]["f1"])
+
+        avg_accuracy = np.mean(aggregated_metrics["accuracy"])
+        std_accuracy = np.std(aggregated_metrics["accuracy"])
+        avg_precision = np.mean(aggregated_metrics["precision"])
+        std_precision = np.std(aggregated_metrics["precision"])
+        avg_recall = np.mean(aggregated_metrics["recall"])
+        std_recall = np.std(aggregated_metrics["recall"])
+        avg_f1 = np.mean(aggregated_metrics["f1"])
+        std_f1 = np.std(aggregated_metrics["f1"])
+
+        # Aggregate confusion matrices
+        all_conf_matrices = [
+            self.metrics[fold][epoch]["conf_matrix"]
+            for fold in self.metrics
+            for epoch in self.metrics[fold]
+        ]
+        avg_conf_matrix = np.mean(all_conf_matrices, axis=0)
 
         return {
             "avg_accuracy": avg_accuracy,
@@ -159,3 +191,118 @@ class Dataset(Dataset):
             "attention_mask": inputs["attention_mask"].flatten(),
             "labels": torch.tensor(label, dtype=torch.long),
         }
+
+
+class Trainer:
+    def __init__(
+        self, model_name, metrics, tokeniser, device, batch_size, max_length, labels
+    ):
+        self.model_name = model_name
+        self.metrics = metrics
+        self.tokeniser = tokeniser
+        self.device = device
+        self.batch_size = batch_size
+        self.max_length = max_length
+        self.labels = labels
+
+    def _make_model(self):
+        m = AutoModelForSequenceClassification.from_pretrained(
+            self.model_name, num_labels=self.labels
+        )
+        o = optim.Adam(m.parameters(), lr=1e-5)
+        return m, o
+
+    def k_fold_train(
+        self,
+        k_data,
+        metric_save_folder: str,
+        model_save_folder: str,
+        tokeniser_save_folder: str,
+        num_epochs: int,
+    ):
+        train_losses = []
+        val_losses = []
+        for fold, (t_data, v_data) in enumerate(k_data):
+            fold_t_loss = []
+            fold_v_loss = []
+            logging.info(f"Fold {fold+1} / {len(k_data)}")
+            model, optimiser = self._make_model(self.model_name)
+            model.to(self.device)
+
+            for epoch in range(num_epochs):
+                logging.info(f"Epoch {epoch+1} / {num_epochs}")
+                model.train()
+                train_loss = 0.0
+                dataset = Dataset(t_data, self.tokeniser, self.max_length)
+                dataloader = torch.utils.data.DataLoader(
+                    dataset, batch_size=self.batch_size, shuffle=True
+                )
+
+                for batch in dataloader:
+                    batch = {k: v.to(self.device) for k, v in batch.items()}
+
+                    outputs = model(**batch)
+                    loss = outputs.loss
+                    loss.backward()
+                    optimiser.step()
+                    optimiser.zero_grad()
+
+                    train_loss += loss.item()
+
+                train_loss /= len(dataloader)
+                fold_t_loss.append(train_loss)
+                model.eval()
+                val_loss
+                all_labels = []
+                all_predictions = []
+                with torch.no_grad():
+                    dataset = Dataset(v_data, self.tokeniser, self.max_length)
+                    dataloader = torch.utils.data.DataLoader(
+                        dataset, batch_size=self.batch_size, shuffle=False
+                    )
+                    for batch in dataloader:
+                        batch = {k: v.to(self.device) for k, v in batch.items()}
+                        labels = batch["labels"]
+                        outputs = model(**batch)
+                        loss = outputs.loss
+                        val_loss += loss.item()
+                        logits = outputs.logits
+                        _, preds = torch.max(logits, dim=1)
+                        all_labels.extend(labels.cpu().numpy())
+                        all_predictions.extend(preds.cpu().numpy())
+
+                val_loss /= len(dataloader)
+                fold_v_loss.append(val_loss)
+                accuracy = (np.array(all_labels) == np.array(all_predictions)).mean()
+                precision = precision_score(
+                    all_labels, all_predictions, average="weighted", zero_division=0
+                )
+                recall = recall_score(all_labels, all_predictions, average="weighted")
+                f1 = f1_score(all_labels, all_predictions, average="weighted")
+                conf_matrix = confusion_matrix(all_labels, all_predictions)
+
+                self.metrics.add_metrics(accuracy, precision, recall, f1, conf_matrix)
+
+                logging.info(
+                    f"Training Loss: {train_loss:.4f}, Validation Loss: {val_loss:.4f}"
+                )
+                logging.info(
+                    f"Validation Accuracy for fold {fold+1}, epoch {epoch+1}: {accuracy:.4f}"
+                )
+                logging.info(
+                    f"Validation Precision for fold {fold+1}, epoch {epoch+1}: {precision:.4f}"
+                )
+                logging.info(
+                    f"Validation Recall for fold {fold+1}, epoch {epoch+1}: {recall:.4f}"
+                )
+                logging.info(
+                    f"Validation F1 Score for fold {fold+1}, epoch {epoch+1}: {f1:.4f}"
+                )
+
+                self.metrics.save(metric_save_folder)
+
+            model.save_pretrained(f"{model_save_folder}fold_{fold}")
+            self.tokeniser.save_pretrained(f"{tokeniser_save_folder}fold_{fold}")
+
+            train_losses.append(fold_t_loss)
+            val_losses.append(fold_v_loss)
