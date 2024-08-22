@@ -43,7 +43,7 @@ logging.basicConfig(
     ],
 )
 
-run_folder = f"/app/results/{model_id}/{timestamp}/"
+run_folder = f"/app/results/{model_id}/{timestamp}_{fraction}/"
 training_data_folder = "testing/events/" if TESTING else "/app/results/events/"
 metric_save_folder = "testing/metrics/" if TESTING else f"{run_folder}metrics/"
 model_save_folder = "testing/models/" if TESTING else f"{run_folder}models/"
