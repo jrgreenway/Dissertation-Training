@@ -70,7 +70,7 @@ metrics = Metrics()
 trainer = Trainer(model_name, metrics, tokeniser, device, 64, max_length, 3)
 
 trainer.k_fold_train(
-    k_data, metric_save_folder, model_save_folder.tokeniser_save_folder, 5
+    k_data, metric_save_folder, model_save_folder, tokeniser_save_folder, 5
 )
 
 try:
