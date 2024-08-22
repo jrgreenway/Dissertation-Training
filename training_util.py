@@ -226,7 +226,7 @@ class Trainer:
             fold_t_loss = []
             fold_v_loss = []
             logging.info(f"Fold {fold+1} / {len(k_data)}")
-            model, optimiser = self._make_model(self.model_name)
+            model, optimiser = self._make_model()
             model.to(self.device)
 
             for epoch in range(num_epochs):
