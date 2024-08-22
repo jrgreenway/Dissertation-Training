@@ -67,10 +67,10 @@ logging.info(f"Using device: {device}")
 max_length = 128
 
 metrics = Metrics()
-trainer = Trainer(model_name, metrics, tokeniser, device, 32, max_length, 3)
+trainer = Trainer(model_name, metrics, tokeniser, device, 64, max_length, 3)
 
 trainer.k_fold_train(
-    k_data, metric_save_folder, model_save_folder.tokeniser_save_folder, learning=True
+    k_data, metric_save_folder, model_save_folder.tokeniser_save_folder, 5
 )
 
 try:
