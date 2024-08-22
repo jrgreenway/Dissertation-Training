@@ -252,7 +252,7 @@ class Trainer:
                 train_loss /= len(dataloader)
                 fold_t_loss.append(train_loss)
                 model.eval()
-                val_loss
+                val_loss = 0.0
                 all_labels = []
                 all_predictions = []
                 with torch.no_grad():
