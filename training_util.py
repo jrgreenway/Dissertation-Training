@@ -83,15 +83,6 @@ class Metrics:
         self.confusion_matrix = np.array([])
         self.result_bool = False
 
-    def to_dict(self):
-        return {
-            "accuracy": self.accuracy.tolist(),
-            "precision": self.precision.tolist(),
-            "recall": self.recall.tolist(),
-            "f1": self.f1.tolist(),
-            "confusion_matrix": self.confusion_matrix.tolist(),
-        }
-
     def add_metrics(self, fold, epoch, a, p, r, f1, conf):
         if fold not in self.metrics:
             self.metrics[fold] = {}
@@ -112,7 +103,7 @@ class Metrics:
             with open(f"{folder}result_metrics.json", "w") as f:
                 json.dump(self.result(), f)
         with open(f"{folder}metrics.json", "w") as f:
-            json.dump(self.to_dict(), f)
+            json.dump(self.metrics, f)
 
     def result(self):
         aggregated_metrics = {"accuracy": [], "precision": [], "recall": [], "f1": []}
@@ -127,34 +118,7 @@ class Metrics:
                 aggregated_metrics["recall"].append(self.metrics[fold][epoch]["recall"])
                 aggregated_metrics["f1"].append(self.metrics[fold][epoch]["f1"])
 
-        avg_accuracy = np.mean(aggregated_metrics["accuracy"])
-        std_accuracy = np.std(aggregated_metrics["accuracy"])
-        avg_precision = np.mean(aggregated_metrics["precision"])
-        std_precision = np.std(aggregated_metrics["precision"])
-        avg_recall = np.mean(aggregated_metrics["recall"])
-        std_recall = np.std(aggregated_metrics["recall"])
-        avg_f1 = np.mean(aggregated_metrics["f1"])
-        std_f1 = np.std(aggregated_metrics["f1"])
-
-        # Aggregate confusion matrices
-        all_conf_matrices = [
-            self.metrics[fold][epoch]["conf_matrix"]
-            for fold in self.metrics
-            for epoch in self.metrics[fold]
-        ]
-        avg_conf_matrix = np.mean(all_conf_matrices, axis=0)
-
-        return {
-            "avg_accuracy": avg_accuracy,
-            "std_accuracy": std_accuracy,
-            "avg_precision": avg_precision,
-            "std_precision": std_precision,
-            "avg_recall": avg_recall,
-            "std_recall": std_recall,
-            "avg_f1": avg_f1,
-            "std_f1": std_f1,
-            "avg_conf_matrix": avg_conf_matrix,
-        }
+        return aggregated_metrics
 
 
 class Dataset(Dataset):
@@ -281,7 +245,9 @@ class Trainer:
                 f1 = f1_score(all_labels, all_predictions, average="weighted")
                 conf_matrix = confusion_matrix(all_labels, all_predictions)
 
-                self.metrics.add_metrics(accuracy, precision, recall, f1, conf_matrix)
+                self.metrics.add_metrics(
+                    fold, epoch, accuracy, precision, recall, f1, conf_matrix
+                )
 
                 logging.info(
                     f"Training Loss: {train_loss:.4f}, Validation Loss: {val_loss:.4f}"
