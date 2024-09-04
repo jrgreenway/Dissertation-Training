@@ -137,17 +137,18 @@ def generate(size, situation: Situation, constraints):
     return group
 
 
-if TESTING:
-    save_path = "testing/events/"
-else:
-    save_path = "results/events/"
+if __name__ == "__main__":
+    if TESTING:
+        save_path = "testing/events/"
+    else:
+        save_path = "results/events/"
 
-for i in [save_path]:
-    os.makedirs(i, exist_ok=True)
+    for i in [save_path]:
+        os.makedirs(i, exist_ok=True)
 
-for sit, sample in zip(
-    list(Situation),
-    [OVERTAKING_SAMPLE, HEAD_ON_SAMPLE, CROSSING_SAMPLE],
-):
-    eventgroup = generate(sample, sit, CONSTRAINTS)
-    eventgroup.to_json(save_path, sit.name)
+    for sit, sample in zip(
+        list(Situation),
+        [OVERTAKING_SAMPLE, HEAD_ON_SAMPLE, CROSSING_SAMPLE],
+    ):
+        eventgroup = generate(sample, sit, CONSTRAINTS)
+        eventgroup.to_json(save_path, sit.name)
