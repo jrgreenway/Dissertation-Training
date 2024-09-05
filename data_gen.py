@@ -8,6 +8,7 @@ from data_types import *
 
 
 def gen_primary_ship(constraints):
+    # Generates a Ship object for the primary ship
     c = constraints
     ship = Ship()
     ship.Heading = 0
@@ -18,6 +19,7 @@ def gen_primary_ship(constraints):
 
 
 def gen_x_y(x, y, bearing, distance):
+    # Generates a X and Y coordinate based on the distance and bearing from the prinary ship
     bearing_rad = math.radians(bearing)
     new_x = x + distance * math.cos(bearing_rad)
     new_y = y + distance * math.sin(bearing_rad)
@@ -25,6 +27,7 @@ def gen_x_y(x, y, bearing, distance):
 
 
 def crossing_helper(primary_ship, c, ship):
+    # Contains the logic for generating a crossing scenario
     target_x = primary_ship.X
     lower_y = primary_ship.Y + 20
     upper_y = c["y_max"]
@@ -46,6 +49,7 @@ def crossing_helper(primary_ship, c, ship):
 def gen_random_ship(
     constraints, primary_ship, situation: Situation, *, crossing: Crossing = None
 ) -> Ship:
+    # Generates a random ship based on the situation (one of the three rule scenarios)
     c = constraints
     ship = Ship()
     distance = random.uniform(50, c["x_max"] / 2)
@@ -92,6 +96,7 @@ def gen_random_ship(
 
 
 def gen_eventgroup(size, situation: Situation, constraints):
+    # Sorts the event into groups of events - for Overtaking and Head-on scenarios
     group = EventGroup()
     for i in tqdm(range(size)):
         event = Event()
@@ -105,6 +110,7 @@ def gen_eventgroup(size, situation: Situation, constraints):
 
 
 def gen_crossing_group(size, situation: Situation, constraints):
+    # Generates an EventGroup for the crossing scenarios, as the logic is different to the other two.
     group = EventGroup()
     for i in tqdm(range(size // 2)):
         event = Event()
@@ -146,6 +152,7 @@ if __name__ == "__main__":
     for i in [save_path]:
         os.makedirs(i, exist_ok=True)
 
+    # Generates an amount (sample) of events for each situation (sit)
     for sit, sample in zip(
         list(Situation),
         [OVERTAKING_SAMPLE, HEAD_ON_SAMPLE, CROSSING_SAMPLE],

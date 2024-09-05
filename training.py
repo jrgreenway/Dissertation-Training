@@ -42,7 +42,7 @@ logging.basicConfig(
         logging.FileHandler(log_file_path),
     ],
 )
-
+# Save folders
 run_folder = f"/app/results/{model_id}/{timestamp}_{fraction}/"
 training_data_folder = "testing/events/" if TESTING else "/app/results/events/"
 metric_save_folder = "testing/metrics/" if TESTING else f"{run_folder}metrics/"
@@ -66,6 +66,7 @@ logging.info(f"Using device: {device}")
 
 max_length = 128
 
+# Training and validation
 metrics = Metrics()
 trainer = Trainer(model_name, metrics, tokeniser, device, 64, max_length, 3)
 

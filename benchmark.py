@@ -7,7 +7,7 @@ from data_types import Situation, Event, EventGroup
 from GLOBAL_VAR import CONSTRAINTS
 import json
 
-
+# Generates 10 crossing situations in memory
 eventgroup = gen_crossing_group(10, Situation.CROSSING, CONSTRAINTS)
 model_dict = defaultdict(
     lambda: "bert", {"bert": "bert", "distilbert": "distilbert", "xlnet": "xlnet"}
@@ -18,6 +18,7 @@ def benchmarker(
     model_name: str,
     data,
 ):
+    # Loads the data for the model and returns the average time per prompt over ten prompts.
     model, tokeniser = start_model(model_name)
     data = Dataset(data, tokeniser, 128)
     dataloader = DataLoader(data, batch_size=1, shuffle=False)
@@ -45,5 +46,6 @@ models = ["bert", "distilbert", "xlnet"]
 for model in models:
     model_dict[model] = benchmarker(model, eventgroup.group)
 
+# Saves the data in a json file
 with open("benchmark.json", "w") as json_file:
     json.dump(model_dict, json_file)

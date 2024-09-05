@@ -4,6 +4,8 @@ import pandas as pd
 
 
 class Ship:
+    """The most basic data structure or a single ship"""
+
     def __init__(self):
         self.X: float
         self.Y: float
@@ -15,6 +17,8 @@ class Ship:
 
 
 class Event:
+    """An event, with the primary ship (ship1) and a secondary ship, along with its COLREG label"""
+
     def __init__(self) -> None:
         self.ship1: Ship
         self.ship2: Ship
@@ -32,6 +36,8 @@ class Event:
 
 
 class EventGroup:
+    """A datastructure that supports groups of Event objects, to help in organising data"""
+
     def __init__(self):
         self.group = None
 
@@ -60,11 +66,15 @@ class EventGroup:
 
 
 class Situation(Enum):
+    """A useful enum to help make code clearer in if statements"""
+
     OVERTAKE = 0
     HEAD_ON = 1
     CROSSING = 2
 
 
 class Crossing(Enum):
+    """A useful enum to help make code clearer in if statements"""
+
     CROSSING_1 = 0
     CROSSING_2 = 1

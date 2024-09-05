@@ -13,6 +13,8 @@ from transformers import AutoModelForSequenceClassification
 
 
 class DataSorter:
+    """This class contains methods for splitting data into k-folds"""
+
     def __init__(self, fraction=1.0) -> None:
         """Fraction is the fraction of all data to collate for getting smaller datasets"""
         self.data = dict()
@@ -37,6 +39,7 @@ class DataSorter:
         self.length = len(self.data[list(self.data.keys())[0]])
 
     def split(self, k):
+        # Split the data into k folds
         if k < 2:
             raise ValueError("k must be at least 2")
         indices = np.arange(self.length)
@@ -74,6 +77,8 @@ class DataSorter:
 
 
 class Metrics:
+    """A class to store and retrieve saved data from the training/validation process"""
+
     def __init__(self):
         self.metrics = {}
         self.accuracy = np.array([])
@@ -91,10 +96,11 @@ class Metrics:
             "precision": p,
             "recall": r,
             "f1": f1,
-            "conf_matrix": conf.tolist(),  # Convert numpy array to list for JSON serialization
+            "conf_matrix": conf.tolist(),
         }
 
     def end(self, folder):
+        """Called at the end of the script, it produces extra averaged results"""
         self.result_bool = True
         self.save(folder)
 
@@ -122,6 +128,8 @@ class Metrics:
 
 
 class Dataset(Dataset):
+    """A custom dataset class for the training data, deriving from torch.util.data.Dataset"""
+
     def __init__(self, data, tokeniser, max_length):
         self.data = data
         self.tokeniser = tokeniser
@@ -158,6 +166,8 @@ class Dataset(Dataset):
 
 
 class Trainer:
+    """The training and validation class"""
+
     def __init__(
         self, model_name, metrics, tokeniser, device, batch_size, max_length, labels
     ):
@@ -184,16 +194,17 @@ class Trainer:
         tokeniser_save_folder: str,
         num_epochs: int,
     ):
+        """Contains the k-fold cross validation script"""
         train_losses = []
         val_losses = []
-        for fold, (t_data, v_data) in enumerate(k_data):
+        for fold, (t_data, v_data) in enumerate(k_data):  # Loop training for each fold
             fold_t_loss = []
             fold_v_loss = []
             logging.info(f"Fold {fold+1} / {len(k_data)}")
             model, optimiser = self._make_model()
             model.to(self.device)
 
-            for epoch in range(num_epochs):
+            for epoch in range(num_epochs):  # Learn over num_epochs epochs
                 logging.info(f"Epoch {epoch+1} / {num_epochs}")
                 model.train()
                 train_loss = 0.0
@@ -219,7 +230,7 @@ class Trainer:
                 val_loss = 0.0
                 all_labels = []
                 all_predictions = []
-                with torch.no_grad():
+                with torch.no_grad():  # Validation
                     dataset = Dataset(v_data, self.tokeniser, self.max_length)
                     dataloader = torch.utils.data.DataLoader(
                         dataset, batch_size=self.batch_size, shuffle=False
